@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Florence - Plant-Human Interface</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>FLORENCE</h1>
+            <h2>Project Florence invites visitors to converse with a plant. Human emotion, expressed through text, is transformed into light—frequencies the plant can perceive. The plant responds, and its signals are translated back into words, creating a dialogue between species.</h2>
+        </header>
+
+        <div class="interface">
+            <div class="input-section">
+                <textarea id="message-input" placeholder="Type your message here..."></textarea>
+                <button id="submit-btn">Submit</button>
+            </div>
+
+            <div class="progress-section">
+                <div class="progress-bar">
+                    <label>Semantic Analysis</label>
+                    <div class="bar"><div class="fill" id="semantic-progress"></div></div>
+                </div>
+                <div class="progress-bar">
+                    <label>Sentiment Analysis</label>
+                    <div class="bar"><div class="fill" id="sentiment-progress"></div></div>
+                </div>
+                <div class="progress-bar">
+                    <label>Human to Plant Translation</label>
+                    <div class="bar"><div class="fill" id="translation-progress"></div></div>
+                </div>
+                <div class="progress-bar">
+                    <label>Sending Message</label>
+                    <div class="bar"><div class="fill" id="message-progress"></div></div>
+                </div>
+                <div class="progress-bar">
+                    <label>Receiving Response</label>
+                    <div class="bar"><div class="fill" id="response-progress"></div></div>
+                </div>
+            </div>
+
+            <div class="visualization-section">
+                <h3>Plant Signals</h3>
+                <canvas id="signal-canvas"></canvas>
+            </div>
+
+            <div class="response-section">
+                <h3>Plant Response</h3>
+                <div id="response-text" class="response-text"></div>
+            </div>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html> 
