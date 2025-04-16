@@ -19,7 +19,7 @@ source venv/bin/activate
 echo "Installing Python dependencies..."
 pip install -r requirements.txt
 
-# Enable SPI interface for NeoPixel
+# Enable SPI interface
 echo "Enabling SPI interface..."
 sudo raspi-config nonint do_spi 0
 
@@ -29,7 +29,7 @@ cat > ~/Desktop/Florence.desktop << EOL
 [Desktop Entry]
 Name=Florence
 Comment=Plant-Human Interface
-Exec=bash -c 'cd ~/Florence_Cursor && source venv/bin/activate && python app.py'
+Exec=bash -c 'cd ~/Florence_Cursor && source venv/bin/activate && sudo python app.py'
 Type=Application
 Categories=Utility;
 EOL
@@ -43,12 +43,12 @@ Description=Florence Plant-Human Interface
 After=network.target
 
 [Service]
-ExecStart=/bin/bash -c 'cd /home/florence/Florence_Cursor && source venv/bin/activate && python app.py'
+ExecStart=/bin/bash -c 'cd /home/florence/Florence_Cursor && source venv/bin/activate && sudo python app.py'
 WorkingDirectory=/home/florence/Florence_Cursor
 StandardOutput=inherit
 StandardError=inherit
 Restart=always
-User=florence
+User=root
 
 [Install]
 WantedBy=multi-user.target
