@@ -10,7 +10,7 @@ echo "Installing system dependencies..."
 sudo apt-get update
 sudo apt-get install -y python3-pip python3-venv
 
-# Create and activate virtual environment
+# Create virtual environment
 echo "Creating virtual environment..."
 python3 -m venv venv
 source venv/bin/activate
@@ -21,26 +21,21 @@ pip install -r requirements.txt
 
 # Configure GPIO10 for NeoPixel
 echo "Configuring GPIO10 for NeoPixel..."
-# Enable SPI interface
 sudo raspi-config nonint do_spi 0
-# Set GPIO10 as output
 echo "10" | sudo tee /sys/class/gpio/export
 echo "out" | sudo tee /sys/class/gpio/gpio10/direction
 
 # Create desktop shortcut
 echo "Creating desktop shortcut..."
-cat > ~/Desktop/florence.desktop << EOL
+cat > ~/Desktop/Florence.desktop << EOL
 [Desktop Entry]
 Name=Florence
 Comment=Plant-Human Interface
-Exec=/usr/bin/python3 $(pwd)/florence/app.py
+Exec=bash -c 'cd ~/Florence_Cursor && source venv/bin/activate && python app.py'
 Type=Application
-Terminal=false
-Categories=Application;
-Icon=$(pwd)/florence/static/icon.png
+Categories=Utility;
 EOL
-
-chmod +x ~/Desktop/florence.desktop
+chmod +x ~/Desktop/Florence.desktop
 
 # Create systemd service
 echo "Creating systemd service..."
@@ -50,24 +45,23 @@ Description=Florence Plant-Human Interface
 After=network.target
 
 [Service]
-ExecStart=$(pwd)/venv/bin/python $(pwd)/florence/app.py
-WorkingDirectory=$(pwd)
+ExecStart=/bin/bash -c 'cd /home/florence/Florence_Cursor && source venv/bin/activate && python app.py'
+WorkingDirectory=/home/florence/Florence_Cursor
 StandardOutput=inherit
 StandardError=inherit
 Restart=always
-User=$USER
+User=florence
 
 [Install]
 WantedBy=multi-user.target
 EOL
 
-# Enable and start service
+# Enable and start the service
+sudo systemctl daemon-reload
 sudo systemctl enable florence.service
 sudo systemctl start florence.service
 
-echo "Setup complete! Please reboot your Raspberry Pi for all changes to take effect."
-echo "After reboot, you can start Florence by:"
-echo "1. Double-clicking the Florence icon on the desktop"
-echo "2. The service will also start automatically on boot"
+echo "Setup complete! Florence is now running as a service."
+echo "You can access the interface at http://localhost:5000"
 echo ""
 echo "To view logs: sudo journalctl -u florence.service -f" 
