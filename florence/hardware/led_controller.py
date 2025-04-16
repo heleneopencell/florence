@@ -1,16 +1,18 @@
 import board
-import neopixel
+import neopixel_write
+import digitalio
 import time
 import threading
+import array
 
 class LEDController:
     def __init__(self):
         # Initialize the NeoPixel strip
-        self.pixel_pin = board.D10  # GPIO10 (MOSI)
         self.num_pixels = 24
-        self.pixels = neopixel.NeoPixel(
-            self.pixel_pin, self.num_pixels, brightness=0.5, auto_write=False
-        )
+        self.pin = digitalio.DigitalInOut(board.D10)  # GPIO10 (MOSI)
+        self.pin.direction = digitalio.Direction.OUTPUT
+        self._pixels = array.array('B', [0] * (self.num_pixels * 3))
+        self._brightness = 0.5
         
         self._semantic_progress = 0
         self._sentiment_progress = 0
@@ -20,16 +22,30 @@ class LEDController:
         
         self._progress_lock = threading.Lock()
 
+    def _write(self):
+        """Write pixel data to the strip."""
+        neopixel_write.neopixel_write(self.pin, self._pixels)
+
+    def fill(self, color):
+        """Fill all pixels with the same color."""
+        r, g, b = color
+        r = int(r * self._brightness)
+        g = int(g * self._brightness)
+        b = int(b * self._brightness)
+        for i in range(self.num_pixels):
+            self._pixels[i*3] = g  # GRB format
+            self._pixels[i*3 + 1] = r
+            self._pixels[i*3 + 2] = b
+        self._write()
+
     def clear(self):
         """Clear all pixels."""
-        self.pixels.fill((0, 0, 0))
-        self.pixels.show()
+        self.fill((0, 0, 0))
 
     def blink(self, color, times, duration=0.5):
         """Blink LED pattern."""
         for _ in range(times):
-            self.pixels.fill(color)
-            self.pixels.show()
+            self.fill(color)
             time.sleep(duration)
             self.clear()
             time.sleep(duration)
@@ -43,8 +59,7 @@ class LEDController:
                 r = int(color[0] * brightness)
                 g = int(color[1] * brightness)
                 b = int(color[2] * brightness)
-                self.pixels.fill((r, g, b))
-                self.pixels.show()
+                self.fill((r, g, b))
                 time.sleep(duration/200)
             
             # Fade out
@@ -53,8 +68,7 @@ class LEDController:
                 r = int(color[0] * brightness)
                 g = int(color[1] * brightness)
                 b = int(color[2] * brightness)
-                self.pixels.fill((r, g, b))
-                self.pixels.show()
+                self.fill((r, g, b))
                 time.sleep(duration/200)
 
     def fade_inout(self, color, times, duration=1.0):
@@ -66,8 +80,7 @@ class LEDController:
                 r = int(color[0] * brightness)
                 g = int(color[1] * brightness)
                 b = int(color[2] * brightness)
-                self.pixels.fill((r, g, b))
-                self.pixels.show()
+                self.fill((r, g, b))
                 time.sleep(duration/100)  # Slower fade
             
             # Hold at full brightness
@@ -79,16 +92,14 @@ class LEDController:
                 r = int(color[0] * brightness)
                 g = int(color[1] * brightness)
                 b = int(color[2] * brightness)
-                self.pixels.fill((r, g, b))
-                self.pixels.show()
+                self.fill((r, g, b))
                 time.sleep(duration/100)  # Slower fade
 
     def blink_pulse(self, color, times, duration=0.5):
         """Blink-pulse LED pattern."""
         for _ in range(times):
             # Quick blink
-            self.pixels.fill(color)
-            self.pixels.show()
+            self.fill(color)
             time.sleep(duration/4)
             self.clear()
             time.sleep(duration/4)
@@ -99,8 +110,7 @@ class LEDController:
                 r = int(color[0] * brightness)
                 g = int(color[1] * brightness)
                 b = int(color[2] * brightness)
-                self.pixels.fill((r, g, b))
-                self.pixels.show()
+                self.fill((r, g, b))
                 time.sleep(duration/100)
             
             for i in range(50, -1, -1):
@@ -108,15 +118,13 @@ class LEDController:
                 r = int(color[0] * brightness)
                 g = int(color[1] * brightness)
                 b = int(color[2] * brightness)
-                self.pixels.fill((r, g, b))
-                self.pixels.show()
+                self.fill((r, g, b))
                 time.sleep(duration/100)
 
     def flash(self, color, times, duration=0.2):
         """Quick flash LED pattern."""
         for _ in range(times):
-            self.pixels.fill(color)
-            self.pixels.show()
+            self.fill(color)
             time.sleep(duration)
             self.clear()
             time.sleep(duration/2)
