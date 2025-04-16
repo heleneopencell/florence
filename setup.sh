@@ -43,21 +43,32 @@ Description=Florence Plant-Human Interface
 After=network.target
 
 [Service]
-ExecStart=/bin/bash -c 'cd /home/florence/Florence_Cursor && source venv/bin/activate && sudo python app.py'
+Type=simple
+ExecStart=/bin/bash -c "cd /home/florence/Florence_Cursor && source venv/bin/activate && python app.py"
 WorkingDirectory=/home/florence/Florence_Cursor
 StandardOutput=inherit
 StandardError=inherit
 Restart=always
 User=root
+Environment=PYTHONUNBUFFERED=1
+Environment=FLASK_APP=app.py
+Environment=FLASK_ENV=development
 
 [Install]
 WantedBy=multi-user.target
 EOL
 
-# Enable and start the service
+# Stop the service if it's running
+sudo systemctl stop florence.service || true
+
+# Reload systemd configuration
 sudo systemctl daemon-reload
-sudo systemctl enable florence.service
+
+# Start the service
 sudo systemctl start florence.service
+
+# Enable the service to start on boot
+sudo systemctl enable florence.service
 
 echo "Setup complete! Florence is now running as a service."
 echo "You can access the interface at http://localhost:5000"
