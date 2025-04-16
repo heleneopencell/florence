@@ -8,7 +8,7 @@ echo "Setting up Florence Plant-Human Interface..."
 # Install system dependencies
 echo "Installing system dependencies..."
 sudo apt-get update
-sudo apt-get install -y python3-pip python3-venv wiringpi
+sudo apt-get install -y python3-pip python3-venv gpiod
 
 # Create virtual environment
 echo "Creating virtual environment..."
@@ -22,8 +22,9 @@ pip install -r requirements.txt
 # Configure GPIO10 for NeoPixel
 echo "Configuring GPIO10 for NeoPixel..."
 sudo raspi-config nonint do_spi 0
-sudo gpio -g mode 10 out
-sudo gpio -g write 10 0
+sudo gpiodetect
+sudo gpioinfo | grep "gpiochip0"
+sudo gpioset --mode=wait --background gpiochip0 10=0
 
 # Create desktop shortcut
 echo "Creating desktop shortcut..."
