@@ -19,10 +19,13 @@ source venv/bin/activate
 echo "Installing Python dependencies..."
 pip install -r requirements.txt
 
-# Configure audio settings for NeoPixel
-echo "Configuring audio settings for NeoPixel..."
-sudo sed -i 's/^dtparam=audio=on/#dtparam=audio=on/' /boot/config.txt
-echo "dtoverlay=pwm" | sudo tee -a /boot/config.txt
+# Configure GPIO10 for NeoPixel
+echo "Configuring GPIO10 for NeoPixel..."
+# Enable SPI interface
+sudo raspi-config nonint do_spi 0
+# Set GPIO10 as output
+echo "10" | sudo tee /sys/class/gpio/export
+echo "out" | sudo tee /sys/class/gpio/gpio10/direction
 
 # Create desktop shortcut
 echo "Creating desktop shortcut..."

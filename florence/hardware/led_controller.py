@@ -6,7 +6,7 @@ import threading
 class LEDController:
     def __init__(self):
         # Initialize the NeoPixel strip
-        self.pixel_pin = board.D18  # GPIO18
+        self.pixel_pin = board.D10  # GPIO10 (MOSI)
         self.num_pixels = 24
         self.pixels = neopixel.NeoPixel(
             self.pixel_pin, self.num_pixels, brightness=0.5, auto_write=False

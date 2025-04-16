@@ -9,26 +9,26 @@ An interactive art installation that enables communication between humans and pl
 * USB Thermal Printer
 * Display for web interface
 
+## Hardware Setup
+
+1. Connect the NeoPixel Ring:
+   * Data pin to GPIO10 (MOSI)
+   * Power to 5V
+   * Ground to GND
+
+2. Connect the thermal printer via USB
+
 ## Software Requirements
 
 * Raspberry Pi OS (Bullseye or newer)
 * Python 3.9+
 * Web browser
 
-## Hardware Setup
-
-1. Connect the NeoPixel Ring:
-   * Data pin to GPIO18
-   * Power to 5V
-   * Ground to GND
-
-2. Connect the thermal printer via USB
-
 ## Software Installation
 
 1. Clone this repository:
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/heleneopencell/florence.git
    cd florence
    ```
 
@@ -62,9 +62,10 @@ The LED ring uses different patterns to represent different types of communicati
 ## Troubleshooting
 
 1. If the NeoPixel ring doesn't work:
-   * Check if audio is disabled in /boot/config.txt
-   * Verify GPIO18 is properly connected
+   * Check if SPI is enabled: `sudo raspi-config nonint get_spi`
+   * Verify GPIO10 is properly connected
    * Check power connections
+   * Verify GPIO10 is set as output: `cat /sys/class/gpio/gpio10/direction`
 
 2. If the thermal printer doesn't work:
    * Check USB connection
